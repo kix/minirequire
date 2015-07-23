@@ -9,25 +9,25 @@ class MiniRequire
 		_this = this
 		return @moduleStore[moduleName] if @moduleStore[moduleName]
 		@require dependencyNames, (deps)->
-    	_this.moduleStore[moduleName] = moduleDefinition.apply(_this, arguments)
-    	if _this.moduleCallbacks[moduleName]
-    		_this.moduleCallbacks[moduleName]()
-    		delete _this.moduleCallbacks[moduleName]
+		_this.moduleStore[moduleName] = moduleDefinition.apply(_this, arguments)
+		if _this.moduleCallbacks[moduleName]
+			_this.moduleCallbacks[moduleName]()
+			delete _this.moduleCallbacks[moduleName]
 	require: (moduleNames, callback) ->
-	  availableModuleNames = []
-	  moduleNames = [moduleNames] if typeof moduleNames == 'string'
-	  _this = this
-	  for moduleName in moduleNames
-	    if @moduleStore[moduleName]
-	      availableModuleNames.push moduleName
-	    else
-	      if moduleScript = @getScriptForModule(moduleName)
-	      	_this.watchForModuleLoad(moduleNames, moduleScript, callback, moduleName)
-	      else
-	      	_this.watchForModuleLoad(moduleNames, moduleScript = @buildScriptForModule(moduleName), callback, moduleName)
-	      	document.body.appendChild moduleScript
-	  if availableModuleNames.length == moduleNames.length
-		  callback.apply _this, moduleNames.map((dependency)-> _this.moduleStore[dependency])
+		availableModuleNames = []
+		moduleNames = [moduleNames] if typeof moduleNames == 'string'
+		_this = this
+		for moduleName in moduleNames
+			if @moduleStore[moduleName]
+				availableModuleNames.push moduleName
+			else
+				if moduleScript = @getScriptForModule(moduleName)
+					_this.watchForModuleLoad(moduleNames, moduleScript, callback, moduleName)
+				else
+				_this.watchForModuleLoad(moduleNames, moduleScript = @buildScriptForModule(moduleName), callback, moduleName)
+				document.body.appendChild moduleScript
+		if availableModuleNames.length == moduleNames.length
+			callback.apply _this, moduleNames.map((dependency)-> _this.moduleStore[dependency])
 	watchForModuleLoad: (moduleNames, moduleScript, callback, moduleName)->
 		_this = this
 		@moduleCallbacks[moduleName] = -> _this.require(moduleNames, callback)
